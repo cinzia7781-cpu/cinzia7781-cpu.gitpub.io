@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Music Request Live V2</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #070711;
+    --card: rgba(20,20,35,.72);
+    --border: rgba(255,255,255,.09);
+    --pink: #ff176f;
+    --purple: #8b5cf6;
+    --cyan: #22d3ee;
+    --green: #22c55e;
+    --text: #f8fafc;
+    --muted: #8b8fa3;
+}
+
+body {
+    min-height: 100vh;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 10% 10%, rgba(139,92,246,.22), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(255,23,111,.15), transparent 30%),
+        radial-gradient(circle at 70% 90%, rgba(34,211,238,.12), transparent 30%),
+        var(--bg);
+    font-family: Inter, "Segoe UI", sans-serif;
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+    color: white;
+}
+
+.app {
+    width: min(1450px, 94%);
+    margin: auto;
+    padding: 25px 0 40px;
+}
+
+/* HEADER */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+
+    background: rgba(255,255,255,.045);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    backdrop-filter: blur(20px);
+
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.logo {
+    width: 54px;
+    height: 54px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 17px;
+
+    background: linear-gradient(
+        135deg,
+        var(--pink),
+        var(--purple)
+    );
+
+    font-size: 27px;
+    box-shadow: 0 0 30px rgba(255,23,111,.25);
+}
+
+.title h1 {
+    font-size: 21px;
+}
+
+.title p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.live-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 10px 15px;
+
+    border-radius: 30px;
+
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.18);
+
+    color: #6ee7a0;
+    font-size: 13px;
+}
+
+.live-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 15px var(--green);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    50% {
+        opacity: .35;
+        transform: scale(.7);
+    }
+}
+
+/* MAIN GRID */
+
+.dashboard {
+    display: grid;
+    grid-template-columns: 1.45fr .75fr;
+    gap: 20px;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 23px;
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+}
+
+/* NOW PLAYING */
+
+.now-playing {
+    padding: 25px;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 17px;
+}
+
+.section-title h2 {
+    font-size: 17px;
+}
+
+.badge {
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.07);
+    color: #a7a9b8;
+}
+
+.player {
+    min-height: 245px;
+
+    display: flex;
+    align-items: center;
+    gap: 27px;
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(255,23,111,.16),
+            rgba(139,92,246,.13),
+            rgba(0,0,0,.2)
+        );
+}
+
+.cover {
+    width: 190px;
+    height: 190px;
+    flex-shrink: 0;
+
+    border-radius: 20px;
+    object-fit: cover;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ec4899,
+            #7c3aed
+        );
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.45),
+        0 0 35px rgba(139,92,246,.18);
+}
+
+.song-details {
+    flex: 1;
+}
+
+.playing-label {
+    color: #fb6c9e;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.song-title {
+    font-size: 28px;
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+.artist {
+    color: #aaaebe;
+    margin-top: 8px;
+}
+
+.progress {
+    height: 5px;
+    margin: 22px 0 8px;
+
+    background: rgba(255,255,255,.08);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 35%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        var(--pink),
+        var(--purple)
+    );
+
+    transition: width .5s linear;
+}
+
+.time {
+    display: flex;
+    justify-content: space-between;
+
+    color: #777b8d;
+    font-size: 11px;
+}
+
+.controls {
+    display: flex;
+    gap: 9px;
+    margin-top: 18px;
+}
+
+.control {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 13px;
+
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.07);
+
+    font-size: 16px;
+
+    transition: .2s;
+}
+
+.control:hover {
+    background: rgba(255,255,255,.13);
+    transform: translateY(-2px);
+}
+
+.play {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        135deg,
+        var(--pink),
+        var(--purple)
+    );
+
+    box-shadow: 0 8px 25px rgba(255,23,111,.25);
+}
+
+/* QUEUE */
+
+.queue {
+    margin-top: 20px;
+}
+
+.queue-list {
+    padding: 0 18px 18px;
+}
+
+.queue-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 11px;
+
+    margin-bottom: 8px;
+
+    border-radius: 15px;
+
+    background: rgba(255,255,255,.035);
+
+    border: 1px solid transparent;
+
+    transition: .2s;
+}
+
+.queue-item:hover {
+    border-color: rgba(255,255,255,.09);
+    background: rgba(255,255,255,.06);
+}
+
+.queue-number {
+    width: 27px;
+    text-align: center;
+    color: #707386;
+    font-size: 12px;
+}
+
+.queue-cover {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 10px;
+    object-fit: cover;
+
+    background: linear-gradient(
+        135deg,
+        #ec4899,
+        #7c3aed
+    );
+}
+
+.queue-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.queue-song {
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.queue-artist {
+    color: #777b8d;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.queue-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.small-btn {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 9px;
+
+    background: rgba(255,255,255,.06);
+
+    font-size: 12px;
+}
+
+.small-btn:hover {
+    background: rgba(255,255,255,.12);
+}
+
+.delete:hover {
+    background: rgba(239,68,68,.2);
+}
+
+/* RIGHT SIDE */
+
+.side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.request-card {
+    padding: 20px;
+}
+
+.input {
+    width: 100%;
+
+    padding: 14px 15px;
+
+    border-radius: 13px;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+
+    background: rgba(0,0,0,.28);
+    color: white;
+
+    font-size: 13px;
+}
+
+.input:focus {
+    border-color: var(--purple);
+}
+
+.request-btn {
+    width: 100%;
+    height: 44px;
+
+    margin-top: 9px;
+
+    border-radius: 13px;
+
+    font-weight: 700;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--pink),
+            var(--purple)
+        );
+}
+
+/* TIKTOK */
+
+.tiktok-card {
+    flex: 1;
+    padding: 20px;
+    min-height: 430px;
+}
+
+.tiktok-feed {
+    max-height: 440px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.tiktok-feed::-webkit-scrollbar {
+    width: 4px;
+}
+
+.tiktok-feed::-webkit-scrollbar-thumb {
+    background: #343445;
+    border-radius: 10px;
+}
+
+.tiktok-message {
+    padding: 13px;
+    margin-bottom: 9px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,.035);
+
+    border-left: 3px solid #ff176f;
+
+    animation: slideIn .35s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tiktok-user {
+    color: #ff6495;
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+.tiktok-text {
+    color: #d7d8df;
+    font-size: 13px;
+}
+
+.request-time {
+    color: #606274;
+    font-size: 10px;
+    margin-top: 7px;
+}
+
+/* TOGGLE */
+
+.auto-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 15px;
+
+    color: #a3a5b3;
+    font-size: 12px;
+}
+
+.switch {
+    width: 42px;
+    height: 23px;
+
+    position: relative;
+
+    border-radius: 20px;
+
+    background: #333443;
+
+    cursor: pointer;
+}
+
+.switch.active {
+    background: linear-gradient(
+        90deg,
+        var(--pink),
+        var(--purple)
+    );
+}
+
+.switch span {
+    position: absolute;
+
+    top: 3px;
+    left: 3px;
+
+    width: 17px;
+    height: 17px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    transition: .2s;
+}
+
+.switch.active span {
+    transform: translateX(19px);
+}
+
+/* FOOTER */
+
+.footer {
+    text-align: center;
+    color: #4d5060;
+    font-size: 10px;
+    margin-top: 20px;
+}
+
+/* MOBILE */
+
+@media(max-width: 900px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .player {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .controls {
+        justify-content: center;
+    }
+
+    .cover {
+        width: 170px;
+        height: 170px;
+    }
+
+}
+
+@media(max-width: 500px) {
+
+    .app {
+        width: 95%;
+    }
+
+    .header {
+        align-items: flex-start;
+        gap: 12px;
+        flex-direction: column;
+    }
+
+    .song-title {
+        font-size: 22px;
+    }
+
+    .cover {
+        width: 145px;
+        height: 145px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="logo-area">
+
+            <div class="logo">
+                🎵
+            </div>
+
+            <div class="title">
+                <h1>Music Request Live</h1>
+                <p>TikTok → Music Queue → YouTube</p>
+            </div>
+
+        </div>
+
+        <div class="live-status">
+            <span class="live-dot"></span>
+            LIVE CONNECTED
+        </div>
+
+    </header>
+
+
+    <main class="dashboard">
+
+        <!-- LEFT -->
+
+        <section>
+
+            <!-- NOW PLAYING -->
+
+            <div class="card now-playing">
+
+                <div class="section-title">
+
+                    <h2>▶ Now Playing</h2>
+
+                    <span class="badge">
+                        AUTO PLAY
+                    </span>
+
+                </div>
+
+
+                <div class="player">
+
+                    <img
+                        id="currentCover"
+                        class="cover"
+                        src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500"
+                        alt="Album Cover"
+                    >
+
+                    <div class="song-details">
+
+                        <div class="playing-label">
+                            NOW PLAYING
+                        </div>
+
+                        <div
+                            id="currentSong"
+                            class="song-title"
+                        >
+                            Waiting for music
+                        </div>
+
+                        <div
+                            id="currentArtist"
+                            class="artist"
+                        >
+                            ยังไม่มีเพลงกำลังเล่น
+                        </div>
+
+
+                        <div class="progress">
+                            <div
+                                id="progressBar"
+                                class="progress-bar"
+                            ></div>
+                        </div>
+
+                        <div class="time">
+                            <span id="currentTime">
+                                0:00
+                            </span>
+
+                            <span>
+                                3:45
+                            </span>
+                        </div>
+
+
+                        <div class="controls">
+
+                            <button
+                                class="control"
+                                onclick="previousSong()"
+                            >
+                                ⏮
+                            </button>
+
+                            <button
+                                id="playButton"
+                                class="control play"
+                                onclick="togglePlay()"
+                            >
+                                ▶
+                            </button>
+
+                            <button
+                                class="control"
+                                onclick="skipSong()"
+                            >
+                                ⏭
+                            </button>
+
+                            <button
+                                class="control"
+                                onclick="openYouTube()"
+                            >
+                                🔗
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUEUE -->
+
+            <div class="card queue">
+
+                <div class="section-title"
+                     style="padding:20px 20px 0;">
+
+                    <h2>🎧 Music Queue</h2>
+
+                    <span
+                        id="queueCount"
+                        class="badge"
+                    >
+                        0 เพลง
+                    </span>
+
+                </div>
+
+                <div
+                    id="queueList"
+                    class="queue-list"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT -->
+
+        <aside class="side">
+
+
+            <!-- MANUAL REQUEST -->
+
+            <div class="card request-card">
+
+                <div class="section-title">
+
+                    <h2>🎤 Request Song</h2>
+
+                    <span class="badge">
+                        MANUAL
+                    </span>
+
+                </div>
+
+                <input
+                    id="songInput"
+                    class="input"
+                    placeholder="ชื่อเพลง - ศิลปิน"
+                    onkeydown="enterRequest(event)"
+                >
+
+                <button
+                    class="request-btn"
+                    onclick="manualRequest()"
+                >
+                    ＋ เพิ่มเพลงเข้าคิว
+                </button>
+
+
+                <div class="auto-row">
+
+                    <span>
+                        ⚡ Auto Play
+                    </span>
+
+                    <div
+                        id="autoSwitch"
+                        class="switch active"
+                        onclick="toggleAuto()"
+                    >
+                        <span></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TIKTOK LIVE -->
+
+            <div class="card tiktok-card">
+
+                <div class="section-title">
+
+                    <h2>🎬 TikTok Live</h2>
+
+                    <span class="badge">
+                        LIVE
+                    </span>
+
+                </div>
+
+                <div
+                    id="tiktokFeed"
+                    class="tiktok-feed"
+                ></div>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <div class="footer">
+        Music Request Live V2 • Demo
+    </div>
+
+</div>
+
+
+<script>
+
+/*
+==================================================
+DATA
+==================================================
+*/
+
+let queue = [];
+
+let currentIndex = -1;
+
+let isPlaying = false;
+
+let autoPlay = true;
+
+let youtubeURL = "";
+
+
+/*
+==================================================
+SAMPLE SONGS
+==================================================
+*/
+
+const sampleSongs = [
+
+    {
+        song: "Blinding Lights",
+        artist: "The Weeknd",
+        cover:
+        "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500"
+    },
+
+    {
+        song: "Perfect",
+        artist: "Ed Sheeran",
+        cover:
+        "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=500"
+    },
+
+    {
+        song: "Until I Found You",
+        artist: "Stephen Sanchez",
+        cover:
+        "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=500"
+    },
+
+    {
+        song: "Die With A Smile",
+        artist: "Lady Gaga & Bruno Mars",
+        cover:
+        "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=500"
+    }
+
+];
+
+
+/*
+==================================================
+INITIAL QUEUE
+==================================================
+*/
+
+queue = [
+
+    sampleSongs[1],
+    sampleSongs[2],
+    sampleSongs[3]
+
+];
+
+renderQueue();
+
+
+/*
+==================================================
+QUEUE RENDER
+==================================================
+*/
+
+function renderQueue() {
+
+    const list =
+        document.getElementById("queueList");
+
+    list.innerHTML = "";
+
+
+    document.getElementById("queueCount")
+        .textContent =
+        `${queue.length} เพลง`;
+
+
+    if (queue.length === 0) {
+
+        list.innerHTML = `
+            <div style="
+                text-align:center;
+                padding:35px;
+                color:#666;
+                font-size:13px;
+            ">
+                🎵 คิวยังว่าง
+            </div>
+        `;
+
+        return;
+    }
+
+
+    queue.forEach((item, index) => {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "queue-item";
+
+
+        div.innerHTML = `
+
+            <div class="queue-number">
+                ${index + 1}
+            </div>
+
+            <img
+                class="queue-cover"
+                src="${item.cover}"
+            >
+
+            <div class="queue-info">
+
+                <div class="queue-song">
+                    ${escapeHTML(item.song)}
+                </div>
+
+                <div class="queue-artist">
+                    ${escapeHTML(item.artist)}
+                </div>
+
+            </div>
+
+            <div class="queue-actions">
+
+                <button
+                    class="small-btn"
+                    onclick="playQueueSong(${index})"
+                    title="เล่น"
+                >
+                    ▶
+                </button>
+
+                <button
+                    class="small-btn delete"
+                    onclick="removeSong(${index})"
+                    title="ลบ"
+                >
+                    ✕
+                </button>
+
+            </div>
+
+        `;
+
+
+        list.appendChild(div);
+
+    });
+
+}
+
+
+/*
+==================================================
+ADD SONG
+==================================================
+*/
+
+function addSong(song, artist, cover) {
+
+    queue.push({
+
+        song,
+        artist,
+
+        cover:
+            cover ||
+            getRandomCover()
+
+    });
+
+
+    renderQueue();
+
+
+    /*
+      ถ้ายังไม่มีเพลงกำลังเล่น
+      และ Auto Play เปิดอยู่
+    */
+
+    if (
+        currentIndex === -1 &&
+        autoPlay
+    ) {
+
+        playNext();
+
+    }
+
+}
+
+
+/*
+==================================================
+PLAY QUEUE SONG
+==================================================
+*/
+
+function playQueueSong(index) {
+
+    currentIndex = index;
+
+    playCurrent();
+
+}
+
+
+/*
+==================================================
+PLAY CURRENT
+==================================================
+*/
+
+function playCurrent() {
+
+    if (
+        currentIndex < 0 ||
+        currentIndex >= queue.length
+    ) {
+
+        return;
+
+    }
+
+
+    const item =
+        queue[currentIndex];
+
+
+    document.getElementById("currentSong")
+        .textContent =
+        item.song;
+
+
+    document.getElementById("currentArtist")
+        .textContent =
+        item.artist;
+
+
+    document.getElementById("currentCover")
+        .src =
+        item.cover;
+
+
+    youtubeURL =
+        "https://www.youtube.com/results?search_query="
+        +
+        encodeURIComponent(
+            item.song + " " + item.artist
+        );
+
+
+    isPlaying = true;
+
+
+    document.getElementById("playButton")
+        .textContent = "❚❚";
+
+
+    resetProgress();
+
+
+    /*
+      ในระบบจริง ตรงนี้สามารถเชื่อม
+      YouTube IFrame Player API ได้
+    */
+
+}
+
+
+/*
+==================================================
+PLAY NEXT
+==================================================
+*/
+
+function playNext() {
+
+    if (queue.length === 0) {
+
+        currentIndex = -1;
+
+        return;
+
+    }
+
+
+    /*
+      ถ้าไม่มีเพลงปัจจุบัน
+    */
+
+    if (currentIndex === -1) {
+
+        currentIndex = 0;
+
+    } else {
+
+        currentIndex++;
+
+    }
+
+
+    /*
+      ถ้าจบคิว
+    */
+
+    if (currentIndex >= queue.length) {
+
+        currentIndex = 0;
+
+    }
+
+
+    playCurrent();
+
+}
+
+
+/*
+==================================================
+SKIP
+==================================================
+*/
+
+function skipSong() {
+
+    if (queue.length === 0) {
+
+        return;
+
+    }
+
+
+    /*
+      ลบเพลงที่กำลังเล่นออกจากคิว
+    */
+
+    if (
+        currentIndex >= 0 &&
+        currentIndex < queue.length
+    ) {
+
+        queue.splice(
+            currentIndex,
+            1
+        );
+
+    }
+
+
+    if (
+        currentIndex >= queue.length
+    ) {
+
+        currentIndex = 0;
+
+    }
+
+
+    renderQueue();
+
+
+    if (queue.length > 0) {
+
+        playCurrent();
+
+    } else {
+
+        currentIndex = -1;
+
+        document.getElementById("currentSong")
+            .textContent =
+            "Waiting for music";
+
+        document.getElementById("currentArtist")
+            .textContent =
+            "รอเพลงใหม่...";
+
+    }
+
+}
+
+
+/*
+==================================================
+PREVIOUS
+==================================================
+*/
+
+function previousSong() {
+
+    if (queue.length === 0) {
+
+        return;
+
+    }
+
+
+    currentIndex--;
+
+    if (currentIndex < 0) {
+
+        currentIndex =
+            queue.length - 1;
+
+    }
+
+
+    playCurrent();
+
+}
+
+
+/*
+==================================================
+REMOVE
+==================================================
+*/
+
+function removeSong(index) {
+
+    queue.splice(index, 1);
+
+
+    if (
+        index < currentIndex
+    ) {
+
+        currentIndex--;
+
+    }
+
+
+    if (
+        currentIndex >= queue.length
+    ) {
+
+        currentIndex =
+            queue.length - 1;
+
+    }
+
+
+    renderQueue();
+
+
+    if (queue.length === 0) {
+
+        currentIndex = -1;
+
+        document.getElementById("currentSong")
+            .textContent =
+            "Waiting for music";
+
+        document.getElementById("currentArtist")
+            .textContent =
+            "รอเพลงใหม่...";
+
+    }
+
+}
+
+
+/*
+==================================================
+MANUAL REQUEST
+==================================================
+*/
+
+function manualRequest() {
+
+    const input =
+        document.getElementById("songInput");
+
+
+    const value =
+        input.value.trim();
+
+
+    if (!value) {
+
+        return;
+
+    }
+
+
+    const parts =
+        value.split(/\s*[-–—]\s*/);
+
+
+    if (parts.length < 2) {
+
+        alert(
+            "กรุณาใช้รูปแบบ:\nชื่อเพลง - ศิลปิน"
+        );
+
+        return;
+
+    }
+
+
+    addSong(
+        parts[0].trim(),
+        parts.slice(1).join(" - ").trim()
+    );
+
+
+    addTikTokMessage(
+        "คุณ",
+        value
+    );
+
+
+    input.value = "";
+
+}
+
+
+/*
+==================================================
+ENTER
+==================================================
+*/
+
+function enterRequest(event) {
+
+    if (event.key === "Enter") {
+
+        manualRequest();
+
+    }
+
+}
+
+
+/*
+==================================================
+TIKTOK LIVE SIMULATION
+==================================================
+*/
+
+function addTikTokMessage(
+    username,
+    text
+) {
+
+    const feed =
+        document.getElementById("tiktokFeed");
+
+
+    const div =
+        document.createElement("div");
+
+
+    div.className =
+        "tiktok-message";
+
+
+    const time =
+        new Date()
+            .toLocaleTimeString(
+                "th-TH",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+
+
+    div.innerHTML = `
+
+        <div class="tiktok-user">
+            @${escapeHTML(username)}
+        </div>
+
+        <div class="tiktok-text">
+            ขอเพลง: ${escapeHTML(text)}
+        </div>
+
+        <div class="request-time">
+            ${time}
+        </div>
+
+    `;
+
+
+    feed.prepend(div);
+
+
+    /*
+      จำกัดจำนวนข้อความ
+    */
+
+    while (
+        feed.children.length > 30
+    ) {
+
+        feed.removeChild(
+            feed.lastChild
+        );
+
+    }
+
+}
+
+
+/*
+==================================================
+SIMULATED LIVE TIKTOK
+==================================================
+*/
+
+function simulateTikTok() {
+
+    const users = [
+        "music_fan",
+        "nana_live",
+        "johnmusic",
+        "mookkk",
+        "dj_fan",
+        "nightvibes"
+    ];
+
+
+    const song =
+        sampleSongs[
+            Math.floor(
+                Math.random() *
+                sampleSongs.length
+            )
+        ];
+
+
+    const user =
+        users[
+            Math.floor(
+                Math.random() *
+                users.length
+            )
+        ];
+
+
+    addTikTokMessage(
+        user,
+        `${song.song} - ${song.artist}`
+    );
+
+
+    addSong(
+        song.song,
+        song.artist,
+        song.cover
+    );
+
+}
+
+
+/*
+==================================================
+AUTO PLAY TOGGLE
+==================================================
+*/
+
+function toggleAuto() {
+
+    autoPlay =
+        !autoPlay;
+
+
+    const toggle =
+        document.getElementById(
+            "autoSwitch"
+        );
+
+
+    toggle.classList.toggle(
+        "active",
+        autoPlay
+    );
+
+}
+
+
+/*
+==================================================
+PLAY / PAUSE
+==================================================
+*/
+
+function togglePlay() {
+
+    if (currentIndex === -1) {
+
+        playNext();
+
+        return;
+
+    }
+
+
+    isPlaying =
+        !isPlaying;
+
+
+    document.getElementById("playButton")
+        .textContent =
+        isPlaying
+        ? "❚❚"
+        : "▶";
+
+}
+
+
+/*
+==================================================
+OPEN YOUTUBE
+==================================================
+*/
+
+function openYouTube() {
+
+    if (!youtubeURL) {
+
+        return;
+
+    }
+
+
+    window.open(
+        youtubeURL,
+        "_blank"
+    );
+
+}
+
+
+/*
+==================================================
+PROGRESS SIMULATION
+==================================================
+*/
+
+let progress = 0;
+
+
+function resetProgress() {
+
+    progress = 0;
+
+    document.getElementById(
+        "progressBar"
+    ).style.width = "0%";
+
+}
+
+
+setInterval(() => {
+
+    if (!isPlaying) {
+
+        return;
+
+    }
+
+
+    progress += .25;
+
+
+    document.getElementById(
+        "progressBar"
+    ).style.width =
+        Math.min(progress, 100) + "%";
+
+
+    const seconds =
+        Math.floor(
+            progress * 2.25
+        );
+
+
+    const min =
+        Math.floor(seconds / 60);
+
+    const sec =
+        seconds % 60;
+
+
+    document.getElementById(
+        "currentTime"
+    ).textContent =
+        `${min}:${String(sec).padStart(2,"0")}`;
+
+
+    /*
+      เพลงจบ
+    */
+
+    if (progress >= 100) {
+
+        if (autoPlay) {
+
+            skipSong();
+
+        } else {
+
+            isPlaying = false;
+
+            document.getElementById(
+                "playButton"
+            ).textContent = "▶";
+
+        }
+
+    }
+
+}, 1000);
+
+
+/*
+==================================================
+AUTO TIKTOK DEMO
+==================================================
+*/
+
+setInterval(() => {
+
+    /*
+      โอกาส 30% ต่อรอบ
+      เพื่อจำลองข้อความเข้ามา
+    */
+
+    if (
+        Math.random() < .30
+    ) {
+
+        simulateTikTok();
+
+    }
+
+}, 5000);
+
+
+/*
+==================================================
+RANDOM COVER
+==================================================
+*/
+
+function getRandomCover() {
+
+    return sampleSongs[
+        Math.floor(
+            Math.random() *
+            sampleSongs.length
+        )
+    ].cover;
+
+}
+
+
+/*
+==================================================
+HTML SECURITY
+==================================================
+*/
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/*
+==================================================
+START
+==================================================
+*/
+
+addTikTokMessage(
+    "music_fan",
+    "Perfect - Ed Sheeran"
+);
+
+addTikTokMessage(
+    "nightvibes",
+    "Blinding Lights - The Weeknd"
+);
+
+addTikTokMessage(
+    "mook_live",
+    "Until I Found You - Stephen Sanchez"
+);
+
+
+/*
+  เริ่มเพลงแรก
+*/
+
+setTimeout(() => {
+
+    playNext();
+
+}, 700);
+
+</script>
+
+</body>
+</html>
